@@ -6,6 +6,7 @@ import { useSocket } from "@/hooks/useSocket";
 import { useAuth } from "@/hooks/useAuth";
 import DeliveryMap from "@/components/DeliveryMap";
 import DeliveryChat from "@/components/DeliveryChat";
+import React from "react";
 
 type OrderTrackingProps = {
   orderId: number;
@@ -100,18 +101,20 @@ export default function OrderTracking({ orderId }: OrderTrackingProps) {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#CB202D]"></div>
           </div>
         ) : (
-          <div className="mb-4">
-            <h2 className="text-xl font-bold text-gray-800">
-              {orderData?.items?.[0]?.menu_item?.restaurant_name || "Restaurant"}
-            </h2>
-            <div className="mt-2 inline-block px-3 py-1 rounded-full text-sm font-medium" 
-              style={{
-                backgroundColor: getStatusBadgeColor(orderStatus).replace('bg-', '#'),
-                color: 'white'
-              }}>
-              {formatOrderStatus(orderStatus)}
+          <React.Fragment>
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-gray-800">
+                {orderData?.items?.[0]?.menu_item?.restaurant_name || "Restaurant"}
+              </h2>
+              <div className="mt-2 inline-block px-3 py-1 rounded-full text-sm font-medium" 
+                style={{
+                  backgroundColor: getStatusBadgeColor(orderStatus).replace('bg-', '#'),
+                  color: 'white'
+                }}>
+                {formatOrderStatus(orderStatus)}
+              </div>
             </div>
-          </div>
+            
             <div className="bg-white rounded-lg shadow-md mb-6">
               <div className="p-4 border-b border-gray-200">
                 <div className="flex justify-between items-center mb-2">
@@ -152,10 +155,10 @@ export default function OrderTracking({ orderId }: OrderTrackingProps) {
                   <div className="relative flex items-center">
                     <div className={`h-8 w-8 ${steps.out_for_delivery ? 'bg-[#CB202D]' : 'bg-gray-300'} rounded-full flex items-center justify-center z-10 relative`}>
                       {steps.out_for_delivery && !steps.delivered && (
-                        <>
+                        <React.Fragment>
                           <div className="h-2 w-2 bg-white rounded-full absolute"></div>
                           <div className="h-8 w-8 bg-[#CB202D] rounded-full absolute animate-ping opacity-30"></div>
-                        </>
+                        </React.Fragment>
                       )}
                       {steps.delivered ? (
                         <i className="fas fa-check text-white text-xs"></i>
@@ -292,6 +295,7 @@ export default function OrderTracking({ orderId }: OrderTrackingProps) {
                 </div>
               </div>
             </div>
+          </React.Fragment>
         )}
       </div>
     </section>

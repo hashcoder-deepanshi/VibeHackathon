@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import { Order, Review } from "@shared/schema";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { formatDate, formatTime } from "@/lib/utils";
+import { Order, Review } from "../../shared/schema";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Skeleton } from "../components/ui/skeleton";
+import { Badge } from "../components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { formatDate, formatTime } from "../lib/utils";
 
 export default function ProfilePage() {
   const [, navigate] = useLocation();
@@ -347,6 +348,82 @@ export default function ProfilePage() {
                 </Button>
               </div>
               
+              {isAddingAddress ? (
+                <div className="border rounded-lg p-6 mb-4">
+                  <h3 className="text-lg font-semibold mb-4">Add New Address</h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="address-type" className="block text-sm font-medium text-gray-700 mb-1">
+                          Address Type
+                        </label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="home">Home</SelectItem>
+                            <SelectItem value="work">Work</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <label htmlFor="flat-no" className="block text-sm font-medium text-gray-700 mb-1">
+                          Flat/House No.
+                        </label>
+                        <Input id="flat-no" placeholder="e.g. 123, A-101" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="street" className="block text-sm font-medium text-gray-700 mb-1">
+                        Street/Area
+                      </label>
+                      <Input id="street" placeholder="e.g. MG Road, Koramangala" />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+                          City
+                        </label>
+                        <Input id="city" placeholder="e.g. Bangalore" />
+                      </div>
+                      <div>
+                        <label htmlFor="pincode" className="block text-sm font-medium text-gray-700 mb-1">
+                          Pincode
+                        </label>
+                        <Input id="pincode" placeholder="e.g. 560001" />
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-end space-x-2 pt-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsAddingAddress(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        className="bg-[#CB202D] hover:bg-[#b31217] text-white"
+                        onClick={() => {
+                          const newAddress = {
+                            id: addresses.length + 1,
+                            type: 'Home', // Would come from form data
+                            full_address: '123 New Street, Added Location, Bangalore - 560001' // Would be constructed from form data
+                          };
+                          setAddresses([...addresses, newAddress]);
+                          setIsAddingAddress(false);
+                        }}
+                      >
+                        Save Address
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+              
               <div className="space-y-4">
                 {addresses?.map((address) => (
                   <div key={address.id} className="border rounded-lg p-4 hover:shadow-md transition">
@@ -355,9 +432,21 @@ export default function ProfilePage() {
                         <h3 className="font-semibold">{address.type}</h3>
                         <p className="text-gray-600 text-sm mt-1">{address.full_address}</p>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-[#CB202D]">
-                        Edit
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button variant="ghost" size="sm" className="text-[#CB202D]">
+                          Edit
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-red-500"
+                          onClick={() => {
+                            setAddresses(addresses.filter(a => a.id !== address.id));
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -381,6 +470,93 @@ export default function ProfilePage() {
                 </Button>
               </div>
               
+              {isAddingPayment ? (
+                <div className="border rounded-lg p-6 mb-4">
+                  <h3 className="text-lg font-semibold mb-4">Add Payment Method</h3>
+                  
+                  <Tabs defaultValue="card" className="w-full mb-4">
+                    <TabsList className="mb-4">
+                      <TabsTrigger value="card">Credit/Debit Card</TabsTrigger>
+                      <TabsTrigger value="upi">UPI</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="card" className="space-y-4">
+                      <div>
+                        <label htmlFor="card-number" className="block text-sm font-medium text-gray-700 mb-1">
+                          Card Number
+                        </label>
+                        <Input id="card-number" placeholder="XXXX XXXX XXXX XXXX" />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="expiry" className="block text-sm font-medium text-gray-700 mb-1">
+                            Expiry Date
+                          </label>
+                          <Input id="expiry" placeholder="MM/YY" />
+                        </div>
+                        <div>
+                          <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-1">
+                            CVV
+                          </label>
+                          <Input id="cvv" placeholder="XXX" type="password" />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="card-name" className="block text-sm font-medium text-gray-700 mb-1">
+                          Name on Card
+                        </label>
+                        <Input id="card-name" placeholder="e.g. John Smith" />
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="upi" className="space-y-4">
+                      <div>
+                        <label htmlFor="upi-id" className="block text-sm font-medium text-gray-700 mb-1">
+                          UPI ID
+                        </label>
+                        <Input id="upi-id" placeholder="e.g. yourname@upi" />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="bank-name" className="block text-sm font-medium text-gray-700 mb-1">
+                          Bank Name
+                        </label>
+                        <Input id="bank-name" placeholder="e.g. SBI, HDFC" />
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                  
+                  <div className="flex justify-end space-x-2 pt-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsAddingPayment(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="bg-[#CB202D] hover:bg-[#b31217] text-white"
+                      onClick={() => {
+                        // Add a mock payment method (in a real app this would save form data)
+                        const newPaymentMethod = {
+                          id: paymentMethods.length + 1,
+                          type: 'card',
+                          last4: '8765',
+                          brand: 'Mastercard',
+                          expiry: '12/25',
+                          bank_name: 'ICICI Bank'
+                        };
+                        setPaymentMethods([...paymentMethods, newPaymentMethod]);
+                        setIsAddingPayment(false);
+                      }}
+                    >
+                      Save Payment Method
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+              
               <div className="space-y-4">
                 {paymentMethods?.map((method) => (
                   <div key={method.id} className="border rounded-lg p-4 hover:shadow-md transition">
@@ -398,7 +574,14 @@ export default function ProfilePage() {
                           </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-[#CB202D]">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-red-500"
+                        onClick={() => {
+                          setPaymentMethods(paymentMethods.filter(m => m.id !== method.id));
+                        }}
+                      >
                         Remove
                       </Button>
                     </div>

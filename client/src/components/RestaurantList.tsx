@@ -38,6 +38,13 @@ export default function RestaurantList({
   
   const { data, isLoading, error } = useQuery<{ data: Restaurant[], meta: { total: number, pages: number } }>({
     queryKey,
+    queryFn: async () => {
+      const response = await fetch(`/api/restaurants?${queryParams.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch restaurants');
+      }
+      return response.json();
+    }
   });
   
   const restaurants = data?.data || [];

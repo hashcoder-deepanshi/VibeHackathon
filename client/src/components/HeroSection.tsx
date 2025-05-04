@@ -32,13 +32,15 @@ export default function HeroSection({ onSearch }: { onSearch: (query: string) =>
           </div>
         </form>
       </div>
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .hero-gradient {
           background: linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
           background-size: cover;
           background-position: center;
         }
-      `}</style>
+        `
+      }} />
     </section>
   );
 }

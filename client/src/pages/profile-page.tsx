@@ -19,6 +19,10 @@ export default function ProfilePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [isAddingAddress, setIsAddingAddress] = useState(false);
+  const [isAddingPayment, setIsAddingPayment] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState([]);
   
   useEffect(() => {
     if (user) {

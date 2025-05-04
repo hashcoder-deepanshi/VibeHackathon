@@ -109,6 +109,11 @@ export default function TableBookingForm({
   // Book table mutation
   const bookTableMutation = useMutation({
     mutationFn: async (data: TableBookingFormValues) => {
+      // Ensure the booking_time field is populated
+      if (!data.booking_time) {
+        data.booking_time = "18:00"; // Default to 6:00 PM if not selected
+      }
+      
       const response = await apiRequest(
         "POST",
         `/api/restaurants/${restaurantId}/book-table`,

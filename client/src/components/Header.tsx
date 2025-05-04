@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Header({ onSearch }: { onSearch?: (query: string) => void }) {
-  const [location] = useLocation();
+  const [, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -85,14 +85,12 @@ export default function Header({ onSearch }: { onSearch?: (query: string) => voi
         <div className="flex items-center">
           {user ? (
             <div className="flex items-center gap-4">
-              <Link href="/profile">
-                <div className="flex items-center gap-2 cursor-pointer hover:text-[#CB202D] transition">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-sm font-medium">{user.name?.charAt(0)}</span>
-                  </div>
-                  <span className="text-gray-700 font-medium hidden md:inline">{user.name}</span>
+              <div onClick={() => setLocation("/profile")} className="flex items-center gap-2 cursor-pointer hover:text-[#CB202D] transition">
+                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span className="text-sm font-medium">{user.name?.charAt(0)}</span>
                 </div>
-              </Link>
+                <span className="text-gray-700 font-medium hidden md:inline">{user.name}</span>
+              </div>
               <Button
                 variant="ghost"
                 onClick={handleLogout}

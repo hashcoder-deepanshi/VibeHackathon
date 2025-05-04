@@ -320,7 +320,7 @@ export default function OrderTracking({ orderId }: OrderTrackingProps) {
                         <i className="fas fa-info-circle text-lg"></i>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-blue-700">Order Status: <span className={`font-bold ${getStatusTextColor(orderStatus)}`}>{formatOrderStatus(orderStatus)}</span></p>
+                        <p className="text-sm font-medium text-blue-700">Order Status: <span className="font-bold text-green-600">{formatOrderStatus(orderStatus)}</span></p>
                         <p className="text-xs text-gray-600 mt-1">
                           {orderData?.order?.payment_method === 'ONLINE' ? 'Paid online' : 'Paid via cash on delivery'}
                         </p>

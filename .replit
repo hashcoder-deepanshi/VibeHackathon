@@ -1,0 +1,56 @@
+modules = ["python-3.11", "nodejs-20"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Python Hello World"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "run_hello_world"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Node.js Application"
+
+[[workflows.workflow]]
+name = "Python Hello World"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python hello_world.py"
+
+[[workflows.workflow]]
+name = "run_hello_world"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python hello_world.py"
+
+[[workflows.workflow]]
+name = "Node.js Application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[deployment]
+run = ["sh", "-c", "python hello_world.py"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80

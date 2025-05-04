@@ -21,8 +21,33 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState("");
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [isAddingPayment, setIsAddingPayment] = useState(false);
-  const [addresses, setAddresses] = useState([]);
-  const [paymentMethods, setPaymentMethods] = useState([]);
+  
+  // Sample data for demonstration purposes
+  type Address = {
+    id: number;
+    type: string;
+    full_address: string;
+  };
+  
+  type PaymentMethod = {
+    id: number;
+    type: string;
+    last4?: string;
+    brand?: string;
+    expiry?: string;
+    bank_name?: string;
+    upi_id?: string;
+  };
+  
+  const [addresses, setAddresses] = useState<Address[]>([
+    { id: 1, type: 'Home', full_address: '123 Main Street, Koramangala, Bangalore - 560034' },
+    { id: 2, type: 'Work', full_address: 'ABC Tech Park, Whitefield, Bangalore - 560066' }
+  ]);
+  
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
+    { id: 1, type: 'card', last4: '4242', brand: 'Visa', expiry: '12/24', bank_name: 'HDFC Bank' },
+    { id: 2, type: 'upi', upi_id: 'user@upi', bank_name: 'SBI' }
+  ]);
   
   useEffect(() => {
     if (user) {
@@ -367,9 +392,9 @@ export default function ProfilePage() {
                           <i className="fas fa-university text-gray-400 mr-3"></i>
                         )}
                         <div>
-                          <h3 className="font-semibold">{method.name}</h3>
+                          <h3 className="font-semibold">{method.type === 'card' ? `${method.brand} Card` : 'UPI'}</h3>
                           <p className="text-gray-600 text-sm mt-1">
-                            {method.type === 'card' ? `••••${method.last4}` : method.bank_name}
+                            {method.type === 'card' ? `••••${method.last4} - ${method.bank_name}` : method.upi_id}
                           </p>
                         </div>
                       </div>

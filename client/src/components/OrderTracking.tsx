@@ -273,7 +273,7 @@ export default function OrderTracking({ orderId }: OrderTrackingProps) {
                   {orderData?.items?.map((item) => (
                     <div key={item.order_item.id} className="flex justify-between items-center">
                       <div className="flex items-center">
-                        <div className="h-2 w-2 bg-gray-400 rounded-full mr-2"></div>
+                        <div className={`h-2 w-2 ${item.menu_item.is_vegetarian ? 'bg-green-500' : 'bg-red-500'} rounded-full mr-2`}></div>
                         <span className="text-sm">{item.order_item.quantity} × {item.menu_item.name}</span>
                       </div>
                       <span className="text-sm">₹{item.order_item.price * item.order_item.quantity}</span>
@@ -281,16 +281,59 @@ export default function OrderTracking({ orderId }: OrderTrackingProps) {
                   ))}
                 </div>
                 
+                {/* Detailed Bill Section */}
                 <div className="border-t border-gray-200 pt-3 mb-3">
-                  <div className="flex justify-between items-center font-bold">
-                    <span>Total Paid</span>
-                    <span>₹{orderData?.order?.total_amount || 0}</span>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Item Total</span>
+                      <span>₹{(orderData?.order?.total_amount || 0) - 70}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Delivery Fee</span>
+                      <span>₹40</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">GST and Restaurant Charges</span>
+                      <span>₹30</span>
+                    </div>
+                    
+                    {orderData?.order?.payment_status === 'discount_applied' && (
+                      <div className="flex justify-between items-center text-sm text-green-600">
+                        <span>Discount Applied</span>
+                        <span>-₹50</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex justify-between items-center font-bold mt-2 pt-2 border-t border-gray-200">
+                      <span>Total Paid</span>
+                      <span>₹{orderData?.order?.total_amount || 0}</span>
+                    </div>
                   </div>
                 </div>
                 
                 <div className="mt-4">
-                  <button className="w-full border border-[#CB202D] text-[#CB202D] py-2 rounded-lg font-medium">
-                    View Detailed Bill
+                  <div className="bg-blue-50 rounded-lg p-3 mb-3 border border-blue-100">
+                    <div className="flex items-start">
+                      <div className="text-blue-500 mr-2">
+                        <i className="fas fa-info-circle text-lg"></i>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-blue-700">Order Status: <span className={`font-bold ${getStatusTextColor(orderStatus)}`}>{formatOrderStatus(orderStatus)}</span></p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {orderData?.order?.payment_method === 'ONLINE' ? 'Paid online' : 'Paid via cash on delivery'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => window.print()} 
+                    className="w-full border border-[#CB202D] text-[#CB202D] py-2 rounded-lg font-medium"
+                  >
+                    <i className="fas fa-print mr-2"></i>
+                    Print Bill
                   </button>
                 </div>
               </div>
@@ -368,4 +411,17 @@ function getEstimatedDeliveryTime(createdAt?: string): string {
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
   
   return `${formattedHours}:${formattedMinutes} ${ampm}`;
+}
+
+function getStatusTextColor(status: string): string {
+  switch (status) {
+    case 'pending': return 'text-yellow-600';
+    case 'confirmed': return 'text-blue-600';
+    case 'preparing': return 'text-blue-600';
+    case 'ready': return 'text-blue-600';
+    case 'out_for_delivery': return 'text-green-600';
+    case 'delivered': return 'text-green-600';
+    case 'cancelled': return 'text-red-600';
+    default: return 'text-gray-600';
+  }
 }
